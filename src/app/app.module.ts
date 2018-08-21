@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 // import FormsModule for ngModel, for forms features
 
 import { AppComponent } from './app.component';
@@ -15,7 +15,7 @@ import { ServersComponent } from './servers/servers.component';
   ],
   imports: [
     BrowserModule,
-    // FormsModule
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent] // which component should start the app
