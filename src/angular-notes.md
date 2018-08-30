@@ -45,7 +45,7 @@ encapsulation: ViewEncapsulation.
 
 ## @VeiwChild
 do some #reference
-in the component: @VeiwChild('reference') someVar;
+in the component: @VeiwChild('reference') someVar: ElementRef;
 the type will be ElementRef
 to accsess: this.somevar.nativeElement.value;
 
@@ -71,5 +71,85 @@ it's part of the content
 do some p with some content inside with #contentreferrence
 in the component: @ContentChild('contentreferrence') contentElem: ElementRef;
 to accsess: this.contentElem.nativeElement.value;
+
+
+## Directives
+to Create a directive:
+1. @Directive({
+  selector: '[newDirective]'
+})
+export class NewDirective implements OnInit {
+  constructor(private elementRef: ElementRef) {}
+
+  ngOnInit() {
+    this.elementRef.nativeElement.style.background = 'green';
+  }
+}
+2. add directive to ngModule declarations
+3. use:
+<p newDirective></p>
+
+#Another way to create directive
+1. ng g d newDirective
+2. should import Renderer2 and in:
+constructor(private elRef: ElementRef, private renderer: Renderer2){}
+3. accssess
+this.renderer.setStyle(this.elRef.nativeElement, 'background-color', 'blue', false, false)
+4. use the same
+
+
+## @HostListener
+@HostListener('mouseenter') mouseover(eventData: Event){
+  this.renderer.setStyle(this.elRef.nativeElement, 'background-color', 'blue', false, false)
+}
+@HostListener('mouseleave') mouseleave(eventData: Event){
+  this.renderer.setStyle(this.elRef.nativeElement, 'background-color', 'transparent', false, false)
+}
+
+
+## @HostBinding
+@HostBinding('style.backgroundColor') backgroundColor: string = transparent;
+@HostListener('mouseenter') mouseover(eventData: Event){
+  this.backgroundColor = 'blue';
+}
+@HostListener('mouseleave') mouseleave(eventData: Event){
+  this.backgroundColor = 'transparent';
+}
+
+
+## property binding  to Directives
+in Directive:
+@Input() defaultColor: string = 'transparent';
+@Input() highlightColor: string = 'blue';
+@HostListener('mouseenter') mouseover(eventData: Event){
+  this.backgroundColor = this.hightlightColor;
+}
+<p newDirective [defaultColor]="'yellow'"></p>
+
+
+## Structural directives
+# * converts to ng-template
+export class UnlessDirective {
+  @Input() set appUnless(condition: boolean) {
+    if (!condition) {
+      this.vcRef.createEmbeddedView(this.templateRef);
+    } else {
+      this.vcRef.clear();
+    }
+  }
+
+  constructor(private templateRef: TemplateRef<any>, private vcRef: ViewContainerRef) {}
+
+}
+# use
+<div *appUnless>
+
+
+## @ng-Switch
+<div [ngSwitch]="value">
+  <p *ngSwitchCase="5">Value is 5</p>
+  <p *ngSwitchCase="3">Value is 3</p>
+  <p *ngSwitchDefault="10">Value is default</p>
+</div>
 
 

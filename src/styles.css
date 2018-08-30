@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+/* it's for bootstrap, it wasn't included */
+.show > .dropdown-menu {
+  display: block;
+}
