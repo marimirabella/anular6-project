@@ -153,3 +153,22 @@ export class UnlessDirective {
 </div>
 
 
+### Services!!!!!!
+# use to access to data and shared methods
+after creating an instance, inject into component
+1. Add it in a constructor:
+constructor(private someService: SomeService) {}
+2. Inform Angular about Service and get an instance => need to provide the service:
+- add to ngModule providers or appcomponent or some @Component providers and specify the type of service(but better to inject into module):
+prorivers: [SomeService]
+3. After all that now service is accessed:
+this.someService.someFunc(args);
+# Inject service into another service
+1. Before service class add and import:
+@Injectable()
+2. Add a constructor to the class as in p.1
+# emit and subscribe
+create new EventEmmiter in service, emit in 1 component and subscribe in 2
+# to generate service in some folder recipes with the same name
+ng g s ./recipes/recipes
+

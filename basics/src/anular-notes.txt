@@ -1,4 +1,0 @@
-- if you need to change smth about the project, do it:
-  angular.json
-  for instance, after installing bootstrap, it was added to styles into angular.json
-- 

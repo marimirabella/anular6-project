@@ -9,7 +9,6 @@
     <app-recipe-item
       *ngFor="let recipeEl of recipes"
       [recipe]="recipeEl"
-      (recipeSelected)="onRecipeSelected(recipeEl)"
     >
     </app-recipe-item>
   </div>
@@ -17,3 +16,4 @@
 
 <!-- src="{{ recipe.imagePath }}"  string intorpolation
     [src]="recipe.imagePath"      property binding -->
+  <!-- (recipeSelected)="onRecipeSelected(recipeEl)" before service -->
