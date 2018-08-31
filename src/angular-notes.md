@@ -172,3 +172,56 @@ create new EventEmmiter in service, emit in 1 component and subscribe in 2
 # to generate service in some folder recipes with the same name
 ng g s ./recipes/recipes
 
+
+## Router
+1. create var appRoutes = [{path: '', component: HomeComponent }] in ngModule;
+2. import RouterModule.forRoot(appRoutes) - allows to register routes for main app
+3. change template with directive:
+<router-outlet></router-outlet> - replace components tags in app component template
+4. add special directive instead of href to links:
+routerLink="/"
+or
+[routerLink]="['/users']"
+# handling active path
+routerLinkActive="active"
+[routerLinkActiveOption]="{exact: true}" do it at '/'
+# navigation in some component
+- import Router
+- inject router in constructor
+private router: Router
+- in some function:
+this.router.navigate(['/somepath']);
+# relative paths only with navigate
+- import Router and ActivatedRoute
+- inject router in constructor and route
+private router: Router, private route: ActivatedRoute
+- in some function, configure the navigation:
+this.router.navigate(['somepath'], {relativeTo: this.route});
+before it went to /somepath
+with relativeTo: it goes to previouspath/somepath
+# parameters
+'users/:id/:name'
+- to get parameters from path in some component:
+import ActivatedRoute,
+// get user info from url path
+ngOnInit() {
+  this.user = {
+    id: this.route.snapshot.params['id'];
+    name: this.route.snapshot.params['name'];
+  }
+  //observable - feature which alows you to work with async tasks
+  // this if you need to rewrite data of your page with new url params;
+  // like this.router.navigate(['/users', 2, 'Ana']
+  this.route.params
+    .subscribe(
+      (params: Params) => {
+        this.user.id = params['id'];
+        this.user.name = params['name'];
+      }
+    );
+}
+# observable
+Angular cleans subscription whatever is component destroyed
+in OnDestroy hook it's possible to unsubscribe
+//117v
+
