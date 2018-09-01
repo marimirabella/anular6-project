@@ -223,5 +223,12 @@ ngOnInit() {
 # observable
 Angular cleans subscription whatever is component destroyed
 in OnDestroy hook it's possible to unsubscribe
-//117v
-
+# query parameters and fragments
+[queryParams]="{allowEdit: '1'}" //key value pair: ?allowEdit=1
+fragment="loading" // another prop: #loading 
+or use it in function:
+this.router.navigate(['/servers', id, 'edit'], {queryParams: {allowEdit: '1'}, fragment: 'loading'});
+# to access them
+this.route.snapshot.queryParams
+this.route.snapshot.fragment
+//119v
