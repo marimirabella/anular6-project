@@ -231,4 +231,51 @@ this.router.navigate(['/servers', id, 'edit'], {queryParams: {allowEdit: '1'}, f
 # to access them
 this.route.snapshot.queryParams
 this.route.snapshot.fragment
-//119v
+# nested routes:
+{ path: 'servers', component: SrvsComponent, children: [
+  { path: ':id', component: SrvComponent }...
+]}
+to use children, they should be added with a help of <router-outlet> in parent template
+# handling query params
+queryParamsHandling: 'merge' or 'preserve' => override prev behaviour
+# redirectTo
+** this means every path which is not specified and we don't know, should be the last path
+{ path: 'not-found', component: PageNotFoundComponent },
+{ path: '**', redirectTo: '/not-found' }
+# app.routing.module.ts
+separate routing from ngModule
+add imports:  RouterModule.forRoot(appRoutes)
+after add exports: [RouterModule]
+# Guards, protection
+using CanActivate in service
+implements CanActivate
+anActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean { return promise }
+# Child protection
+canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  return this.canActivate(route, state);
+}
+# prevent the user of using some route
+export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
+  canDeactivate(component: CanComponentDeactivate, currentRoute: ActivatedRouteSnapshot, currentState: RouterStateSnapshot, nextState?: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    return component.canDeactiveate();
+  }
+}
+implement interface in component and use CanDeactivate method with terms
+# pass static data with the data prop
+, data: {message: 'Page not found!'}
+# pass dynamic data
+Resolver in service to fetch some data
+export class ServerResolver implements Resolve<Server>
+resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Server> | Promise<Server> | Server
+to router-module add resolve prop:
+resolve: {server: ServerResolved}
+it's another way to fetch data, earlier it was with onInit, now with resolver. OnInit:
+this.route.data.subscribe(
+  (data: Data) => {
+    this.server = data['server'];
+});
+# location, rarely used
+RouterModule.forRoot(appRoutes, {useHash: true})
+# path match
+pathMatch: 'full'...
+// 141v
