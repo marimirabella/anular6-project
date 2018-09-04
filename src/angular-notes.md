@@ -278,4 +278,136 @@ this.route.data.subscribe(
 RouterModule.forRoot(appRoutes, {useHash: true})
 # path match
 pathMatch: 'full'...
-// 141v
+
+
+### Observable
+1. Create observable
+2. Subscribe; has 3 args callbacks for handling:
+- normal data
+- errors
+- completion
+# unsubscribe if is needed
+- store observable to prop
+- in ngOnDestroy hook:
+this.prop.unsubscribe();
+# operators
+after creating observable add some operators with pipe(), can be chain
+Observable.interval(1000).pipe(map(project(data: type) => data*2 ))
+// interval... can be imported from rxjs directly
+# Subject
+ingredientsChanged = new Subject<Ingredient[]>(); // replaced EventEmitter
+this.ingredientsChanged.next([...this.ingredients]); // instead emit
+need to unsubscribe manually
+
+
+### Forms
+import FormsModule into imports of ngModule
+# 2 approaches
+- Template-driven
+- Reactive
+## Template-driven approach
+# ngModel with name
+- name should be added to inputs
+ngModel
+name="username"
+# submit and reference on form elements
+- don't do it on button
+- do it in form:
+1. approach
+<form (ngSubmit)="onSubmit(formReference)" #formReference="ngForm">
+onSubmit(form: NgForm) { console.log(form);}
+2. approach
+<form (ngSubmit)="onSubmit()" #formReference="ngForm">
+@ViewChild('formReference') signupForm: NgForm
+onSubmit() { console.log(this.signupForm);}
+
+# validation
+- email directive, there are others as well
+[disabled]="!formReference.valid"
+- styles for invalid input or whatever:
+input.ng-invalid.ng-touched
+- warning message
+add reference to input and add it to ngIf
+<input type="email" ngModel #email="ngModel">
+<span *ngIf="!email.valid && email.touched">Please enter a valid email!</span>
+# default values
+[ngModel]="1(prop on the component) or 2(string => some@email.com)"
+# 2way data binding
+[(ngModel)]="answer"
+<p>{{ answer }}</p>
+create prop in the comp: answer = '';
+
+# ngModel
+1. ngModel - no binding, to just tell that input is in control
+2. [ngModel] - one way binding, to give that control a default value
+3. [(ngModel)] - two way binding, to instantly output it or to do smth with that value
+# ngModelGroup directive
+after form tag in div, access to the form elements and also can be used for showing span with warnings... 
+<div ngModelGroup="userData" #userData="ngModelGroup">
+<span *ngIf="!userData.valid && userData.touched">Please enter a valid email!</span>
+
+# radio buttons
+[value]="fromngForVal"
+# set value to some input after click on button
+1. overrides whole form
+- @ViewChild('formReference') signupForm: NgForm
+- in method in the comp:
+this.referenceForm.setValue({
+  userData: {
+    username: 'name',
+    email: ''
+  },
+  gender: 'male'
+});
+2. overrides parts of the form
+this.referenceForm.form.patchValue({
+  userData: {
+    username: 'newName'
+  }
+});
+# submitted data
+to access: this.referenceForm.value.userData.email...
+# reset
+this.referenceForm.reset() or this.referenceForm.setValue({with specific values})
+
+## Reactive approach
+import ReactiveFormsModule to ngModule
+import FormGroup, FormControl to component
+signupForm: FormGroup;
+- initialise the form in the component in onInit
+this.signupForm = mew FormGroup({
+  'username': new FormControl(null),
+  'email': new FormControl(null),
+  'gender': new FormControl('male')
+});
+- add it to tepmplate to synchronize it
+<form [formGroup]="signupForm">
+- formControlName directive to add values to needed inputs
+formControlName="username"
+
+# submit, don't need ref
+(ngSubmit)="onSubmit()"
+onSubmit(){console.log(this.signupForm)}
+# validation
+required doesn't work
+do it in the comp:
+- import Validators,
+- 'username': new FormControl(null, Validators.required)
+- 'username': new FormControl(null, [Validators.required, Validators.email])
+# warning message
+<span *ngIf="!signupForm.get('username').valid && signupForm.get('username').touched">Please enter a valid email!</span>
+<span *ngIf="!signupForm.valid && signupForm.touched">Please enter a valid data!</span>
+# grouping formControls
+- nesting
+this.signupForm = mew FormGroup({
+  'userData': new FormGroup({
+    'username': new FormControl(null),
+    'email': new FormControl(null)
+  }),
+  'gender': new FormControl('male')
+});
+- adding extra div to template
+<div formGroupName="userData">
+- update get() method:
+signupForm.get('userData.username')...
+// 186v
