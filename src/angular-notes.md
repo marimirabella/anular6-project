@@ -410,4 +410,61 @@ this.signupForm = mew FormGroup({
 <div formGroupName="userData">
 - update get() method:
 signupForm.get('userData.username')...
-// 186v
+
+# array of controls
+1. create button with func on click
+2. add new prop to FormGroup in the component:
+'hobbies': new FormArray([])
+3. in a func:
+(<FormArray>this.signupForm.get('hobbies')).push(new FormControl(null, Validators.required))
+4. wrap template in div with formArrayName="hobbies
+5. add div with ngFor with index and input with [formControlName]="i"
+# custom validator
+- create props
+forbiddenUsernames = ['Chris', 'Ana'];
+- create func
+forbiddenNames(control: FormControl): {[s: string]: boolean} {
+  if (this.forbiddenUsernames.indexOf(control.value) !== -1) {
+    return {'nameIsForbidden': true};
+  }
+  return null;
+}
+- use:
+'username': new FormControl(null, [Validators.required, this.forbiddenUsernames.bind(this)])
+# using error code, async validator
+- create func
+forbiddenemails(control: FormControl): Promise<any> | Observable<any> {
+  const promise = new Promise<any>((resolve, reject) => {
+    setTimeout(() => {
+      if (control.value === 'test@test.com') {
+        resolve({'emailIsForbidden': true});
+      } else {
+        resolve(null);
+      }
+    }, 1500)
+  });
+  return promise;
+}
+- use, not in the array or in the array of async validators
+'email': new FormControl(null, [Validators.required, Validators.email], this.forbiddenemails)
+# status and value changes on onInit hook
+this.signupForm.valueChanges.subscribe(value => console.log(value));
+this.signupForm.statusChanges.subscribe(status => console.log(status));
+# set and patch value
+this.signupForm.setValue({
+  'userData': {
+    'username' 'Max',
+    'email': 'max@test.com'
+  },
+  'gender: 'male',
+  'hobbies': []
+});
+this.signupForm.patchValue({
+  'userData': {
+    'username' 'Alex',
+  }
+});
+# reset
+this.signupForm.reset()
+
+
