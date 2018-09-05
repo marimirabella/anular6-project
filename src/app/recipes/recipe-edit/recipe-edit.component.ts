@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 import { RecipeService } from '../recipe.service';
@@ -7,7 +7,7 @@ import { RecipeService } from '../recipe.service';
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
-  styleUrls: []
+  styleUrls: ['./recipe-edit.component.css']
 })
 export class RecipeEditComponent implements OnInit {
   id: number;
@@ -15,6 +15,7 @@ export class RecipeEditComponent implements OnInit {
   recipeForm: FormGroup;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private recipeService: RecipeService) { }
 
   ngOnInit() {
@@ -27,6 +28,42 @@ export class RecipeEditComponent implements OnInit {
         }
       );
   }
+
+  onSubmit() {
+    // const newRecipe = new Recipe(
+    //   this.recipeForm.value.name,
+    //   this.recipeForm.value.description,
+    //   this.recipeForm.value.imagePath,
+    //   this.recipeForm.value.ingredients
+    // );
+    this.editMode
+      // ? this.recipeService.updateRecipe(this.id, newRecipe) => the same as
+      // this.recipeForm.value
+      ? this.recipeService.updateRecipe(this.id, this.recipeForm.value)
+      : this.recipeService.addRecipe(this.recipeForm.value);
+    this.onCancel();
+  }
+
+  onAddIngredient() {
+    (<FormArray>this.recipeForm.get('ingredients')).push(
+      new FormGroup({
+        'name': new FormControl(null, Validators.required),
+        'amount': new FormControl(null, [
+          Validators.required,
+          Validators.pattern(/^[1-9]+[0-9]*$/)
+        ]),
+      })
+    );
+  }
+
+  onCancel() {
+    this.router.navigate(['../'], {relativeTo: this.route});
+  }
+
+  onDeleteIngredient(index: number) {
+    (<FormArray>this.recipeForm.get('ingredients')).removeAt(index);
+  }
+
 
   private initForm() {
     let recipeName = '';
@@ -44,11 +81,13 @@ export class RecipeEditComponent implements OnInit {
         for (const ingredient of recipe.ingredients) {
           recipeIngredients.push(
             new FormGroup({
-              'name': new FormControl(ingredient.name),
-              'amount': new FormControl(ingredient.amount),
+              'name': new FormControl(ingredient.name, Validators.required),
+              'amount': new FormControl(ingredient.amount, [
+                Validators.required,
+                Validators.pattern(/^[1-9]+[0-9]*$/)
+              ])
             })
           );
-          console.log(recipeIngredients);
         }
       }
     }
@@ -60,9 +99,4 @@ export class RecipeEditComponent implements OnInit {
       'ingredients': recipeIngredients,
     });
   }
-
-  onSubmit() {
-    console.log(this.recipeForm);
-  }
-
 }

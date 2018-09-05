@@ -470,5 +470,46 @@ this.signupForm.patchValue({
 });
 # reset
 this.signupForm.reset()
-// 204v 
 
+
+## Pipes
+- uppercase
+- date:
+prop | date: 'fullDate' | uppercase => from left to right
+# custom pipe
+- create a new file like:
+shorten.pipe.ts
+- add decorator:
+@Pipe({
+  name: 'shorten'
+})
+- class implements PipeTransform
+- provide transform method:
+transform(value: any) {
+  return value.substr(0, 10);
+}
+- add in ngModule to declarations
+- use in template:
+prop | shorten
+# customize custom pipe
+- transform(value: any, limit: number) { return value.substr(0, limit);}
+- use
+prop | shorten:5
+# ngModel pipes
+[(ngModel)] = "filetredStatus"
+- ng g p nameofpipe
+- transform method:
+- use ngFor:
+*ngFor="let server of servers | filter:filetredStatus"
+# pure pipes
+in decorator 2nd prop to see the changes of pipe immediately:
+better to not use => will be perfomance issues
+Pipe({
+  name: 'shorten',
+  pure: false
+})
+# async pipes 
+prop | async
+
+
+// 224v
