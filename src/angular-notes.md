@@ -417,8 +417,12 @@ signupForm.get('userData.username')...
 'hobbies': new FormArray([])
 3. in a func:
 (<FormArray>this.signupForm.get('hobbies')).push(new FormControl(null, Validators.required))
-4. wrap template in div with formArrayName="hobbies
-5. add div with ngFor with index and input with [formControlName]="i"
+4. wrap template in div with formArrayName="hobbies"
+5. add next div with ngFor
+*ngFor="let hobbyCtrl of signupForm.get('hobbies').controls; let i = index"
+[formControlName]="i"
+5. add to inputs:
+formCotrolName="name"
 # custom validator
 - create props
 forbiddenUsernames = ['Chris', 'Ana'];
@@ -466,5 +470,5 @@ this.signupForm.patchValue({
 });
 # reset
 this.signupForm.reset()
-
+// 204v 
 
