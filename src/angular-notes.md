@@ -512,4 +512,84 @@ Pipe({
 prop | async
 
 
-// 224v
+### HTTP requests
+- create service
+- add service to providers in ngModule
+- import HTTPModule and inject http in the constructor:
+@Injectable()
+constructor(private http: Http){}
+- create method to send http request(POST):
+storeServer(server: any[]) {
+  const headers = new Headers({'Content-type': 'application/json});
+  // it creates an observable, now it's not sent
+  return this.http.post('https://project.firebase.com/data.json', servers, {headers: headers});
+}
+- inject service in the component:
+  - in constructor => private serviceService: ServiceService
+  - create button with click event in the template
+  - create method:
+  onSave() {
+    // this method return an observable
+    this.serviceService.storeService(this.servers)
+      .subscribe(
+        (response) => console.log(response),
+        (error) => console.log(error);
+      );
+  }
+# Get request
+- getServers() {
+  return this.http.get('https://project.firebase.com/data.json');
+}
+- in the component create method: 
+ onGet() {
+    this.serviceService.getServers()
+      .subscribe(
+        (response: Response) => {
+          const data = response.json();
+        },
+        (error) => console.log(error);
+      );
+  }
+# Put request
+- just updates existing data
+return this.http.put('https://project.firebase.com/data.json', servers, {headers: headers});
+# transform data
+- in service, before import 'rxjs/Rx':
+getServers() {
+  return this.http.get('https://project.firebase.com/data.json')
+    .map(
+      (response: Response) => {
+        const data = response.json();
+        // we can modify data here
+        return data;
+      }
+    );
+}
+- in the component on subscribe we already receive data:
+onGet() {
+    this.serviceService.getServers()
+      .subscribe(
+        (servers: any[]) => {
+          this.servers = servers;
+        },
+        (error) => console.log(error);
+      );
+  }
+# Error handling
+- it's possible to catch error in service: 
+  getServers() {
+  return this.http.get('https://project.firebase.com/data.json')
+    .map(...)
+    .catch(
+      (error: Response) => {
+        return Observable.throw('Smth went wrong');
+      }
+    );
+  }
+# Async Pipe
+1. create http get request in service, return response.json(), this request return one key value pair
+2. create prop for ex. 'name' in the component and assign it to the servFunc:
+name = this.someService.getName();
+3. use pipe to convert obj:
+<h2>{{ name | async }}</h2>
+// 234v
